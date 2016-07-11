@@ -13,30 +13,57 @@ Simple setup of a telegram Bot:
 ```javascript
 class Script {
 
-  process_incoming_request({ request }) {
-    // request.content.message.from.first_name
-    // request.content.message.text
+process_incoming_request({ request }) {
+// https://api.telegram.org/file/bot185440081:AAGnLHwB4Aveq5pZCGisnc1onscG_rP4iwk/photo/file_157.jpg
+//checks for sticker
+if(request.content.message.sticker){
+  arr1 = request.content.message.sticker
+return {
+content: {
+  username: request.content.message.from.first_name,
+  icon_url: '/avatar/' + request.content.message.from.first_name + '.jpg' ,
+  text: ' '+ request.content.message.sticker.emoji  
+  // attachments: request.content.message.sticker.emoji
+ }
+};
+}
+//checks for photo 
+if(request.content.message.photo){
+  arr2 = request.content.message.photo
+  
+return {
+  
+content: {
+  username: request.content.message.from.first_name,
+  icon_url: '/avatar/' + request.content.message.from.first_name + '.jpg' ,
+  text:  'https://api.telegram.org/file/bot185440081:AAGnLHwB4Aveq5pZCGisnc1onscG_rP4iwk/'+arr2[0].file_path ,
+  //+ 'request full image here [link](https://api.telegram.org/bot185440081:AAGnLHwB4Aveq5pZCGisnc1onscG_rP4iwk/getFile?file_id='+ arr2[2].file_id+')' 
+  // request bigger image 'https://api.telegram.org/bot185440081:AAGnLHwB4Aveq5pZCGisnc1onscG_rP4iwk/getFile?file_id='+ arr2[2].file_id
+ }
+};
 
-    // console is a global helper to improve debug
-    console.log(request.content);
-  if('edited_message' in request.content) {
-    request.content.message = request.content.edited_message;
-  }
-    return {
-      content: {
-        username: request.content.message.from.first_name,
-        icon_url: '/avatar/' + request.content.message.from.first_name + '.jpg' ,
-        text: request.content.message.text
-       }
-    };
+}
 
-     return {
-       error: {
-         success: false,
-         message: 'Error example'
-       }
-     };
-  }
+  
+  
+console.log(request.content);
+
+return {
+content: {
+  username: request.content.message.from.first_name,
+  icon_url: '/avatar/' + request.content.message.from.first_name + '.jpg' ,
+  text: request.content.message.text + ' ', 
+  // attachments: request.content.message.sticker.emoji
+ }
+};
+
+return {
+ error: {
+   success: false,
+   message: 'Error example'
+ }
+};
+}
 }
 ```
 8.	Copy incoming webhook URL from rocketchat
@@ -44,7 +71,7 @@ class Script {
 https://api.telegram.org/bot[myauthorization-token]/setwebhook?url=[Incoming_Webhook_Link_from_RocketChat]
 10.	Receive message  {"ok":true,"result":true,"description":"Webhook succsessfully set"} (or similar)
 11.	Test your incoming Webhook by sending a telegram message to the bot, it should be posted in the chan-nel/user you specified in the incoming webhook, check Rocketchat Console Log and write down Chat_id [chat-id]
-12.	Create outgoing webhook and specify channel with the following url:
+12.	Create outgoing webhook and specify channel, add the following adepted url:
 https://api.telegram.org/bot[myauthorization-token]/sendMessage?chat_id=[chat-id]
 13.	Paste the script:
 ```javascript
@@ -78,3 +105,5 @@ Cheers!
 (I am not a code wizard, which becomes apparent when reading the scripts, i am sure if someone digs into the telegram Bot API there are many more things possible) 
 
 ![final product](http://i.imgur.com/LqpqUC8.jpg?1)
+
+edit: Sticker will be replaced with smilies
