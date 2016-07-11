@@ -13,30 +13,56 @@ Simple setup of a telegram Bot:
 ```javascript
 class Script {
 
-  process_incoming_request({ request }) {
-    // request.content.message.from.first_name
-    // request.content.message.text
+process_incoming_request({ request }) {
+//checks for sticker
+if(request.content.message.sticker){
+  arr1 = request.content.message.sticker
+return {
+content: {
+  username: request.content.message.from.first_name,
+  icon_url: '/avatar/' + request.content.message.from.first_name + '.jpg' ,
+  text: ' '+ request.content.message.sticker.emoji  
+  // attachments: request.content.message.sticker.emoji
+ }
+};
+}
+//checks for photo 
+if(request.content.message.photo){
+  arr2 = request.content.message.photo
+  
+return {
+  
+content: {
+  username: request.content.message.from.first_name,
+  icon_url: '/avatar/' + request.content.message.from.first_name + '.jpg' ,
+  text:  'https://api.telegram.org/file/bot[myauthorization-token]/'+arr2[0].file_path ,
+  //+ 'request full image here [link](https://api.telegram.org/bot[myauthorization-token]/getFile?file_id='+ arr2[2].file_id+')' 
+  // request bigger image 'https://api.telegram.org/bot[myauthorization-token]/getFile?file_id='+ arr2[2].file_id
+ }
+};
 
-    // console is a global helper to improve debug
-    console.log(request.content);
-  if('edited_message' in request.content) {
-    request.content.message = request.content.edited_message;
-  }
-    return {
-      content: {
-        username: request.content.message.from.first_name,
-        icon_url: '/avatar/' + request.content.message.from.first_name + '.jpg' ,
-        text: request.content.message.text
-       }
-    };
+}
 
-     return {
-       error: {
-         success: false,
-         message: 'Error example'
-       }
-     };
-  }
+  
+  
+console.log(request.content);
+
+return {
+content: {
+  username: request.content.message.from.first_name,
+  icon_url: '/avatar/' + request.content.message.from.first_name + '.jpg' ,
+  text: request.content.message.text + ' ', 
+  // attachments: request.content.message.sticker.emoji
+ }
+};
+
+return {
+ error: {
+   success: false,
+   message: 'Error example'
+ }
+};
+}
 }
 ```
 8.	Copy incoming webhook URL from rocketchat
