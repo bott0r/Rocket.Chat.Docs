@@ -34,7 +34,7 @@ class Script {
         }
         let body = request.content.message.text
 
-        if(!body) {
+        if(request.content.message.sticker) {
           if(request.content.message.sticker.emoji) {
             // It's a sticker
             body = request.content.message.sticker.emoji
@@ -42,7 +42,15 @@ class Script {
            return {}
           }
         }
-
+        if(request.content.message.document) {
+          if(request.content.message.document.file_name) {
+            // It's a document gif
+            //body = request.content.message.document.file_name
+            body = 'I sent a stupid telegram gif'
+        } else {
+           return {}
+          }
+        }
         return {
             content: {
                 username: who,
