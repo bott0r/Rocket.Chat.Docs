@@ -26,7 +26,7 @@ _follow these instructions to get a simple Telegram Bot setup_
 class Script {
     process_incoming_request({ request }) {
         // UNCOMMENT THE BELOW LINE TO DEBUG IF NEEDED.
-        //console.log(request.content);
+        console.log(request.content);
         if ('edited_message' in request.content) {
             request.content.message = request.content.edited_message;
         }
@@ -37,8 +37,18 @@ class Script {
           icon_url = `/avatar/${request.content.message.from.first_name}.jpg`
         }
         let body = request.content.message.text
+        //let photo = request.content.message.attachments.image_url
 
-        if(!body) {
+        //if(!body) {
+        //  if(request.content.message.sticker.emoji) {
+        //    // It's a sticker
+        //    body = request.content.message.sticker.emoji
+        //} else {
+        //   return {}
+        //  }
+        //}
+
+        if(request.content.message.sticker) {
           if(request.content.message.sticker.emoji) {
             // It's a sticker
             body = request.content.message.sticker.emoji
@@ -46,7 +56,37 @@ class Script {
            return {}
           }
         }
-
+        if(request.content.message.document) {
+          if(request.content.message.document) {
+            // It's a gif
+            body = 'I send a gif :)' 
+        } else {
+           return {}
+          }
+        }
+        if(request.content.message.photo) {
+          console.log(request.content.message.photo);
+          if(request.content.message.photo[0]) {
+            // It's a picture
+            //// 'https://api.telegram.org/bot123/getFile?file_id=${request.content.message.photo[0].file_path}'
+            //body = 'i uploaded a pic ' + ' ![photo]('+`https://api.telegram.org/file/bot123/${request.content.message.photo[0].file_path}`+')'
+            body = 'i uploaded a pic'
+            //body = 'https://api.telegram.org/file/bot123/'+`${request.content.message.photo[0].file_path}`
+            //request.content.message.attachments.image_url = `https://api.telegram.org/file/bot4123/${request.content.message.photo[0].file_path}`
+        } else {
+           return {}
+          }
+        }
+        if(request.content.message.video) {
+          if(request.content.message.video.file_id) {
+            // It's a video
+            // works body = `https://api.telegram.org/file/bot123/${request.content.message.photo[0].file_path}`
+            body = 'video upload'
+            //request.content.message.attachments.image_url = `https://api.telegram.org/file/bot123/` + ${request.content.message.photo[0].file_path}
+        } else {
+           return {}
+          }
+        }
         return {
             content: {
                 username: who,
